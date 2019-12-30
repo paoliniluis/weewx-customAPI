@@ -3,12 +3,13 @@ WeeWX Extension for sending your data to a custom REST API
 
 *DISCLAIMER: I'm not responsible to anything that happens to your weather station, or WeeWX installation or anything in between. This is just a bit of code I added to my WeeWX installation as I wanted to send the data that was sent to Weather Underground to a custom API that I built.*
 
-Steps to make this work:
+# Steps to make this work:
 
 1) install WeeWX
 2) Make sure you're currently sending data to any sort of destination (like WU or AWEKAS)
 3) include the following code in your "restx.py" file (depending on the distro where you installed can be in different locations. If you don't know where the file is just run the following command "cd / && find | grep restx.py" without quotes):
-`
+
+```
 class StdCustomApi(StdRESTful):
     """Specialized version of the Ambient protocol for your custom API.
     """
@@ -89,10 +90,12 @@ class StdCustomApi(StdRESTful):
     def new_archive_record(self, event):
         """Puts new archive records in the archive queue"""
         self.archive_queue.put(event.record)
-`
+```
+
 4) include the following code in your weewx.conf file (same as above):
 Section [StdRESTful]
-`
+
+```
     [[CustomAPI]]
         # This section is for configuring posts to your own custom REST API.
 
@@ -107,11 +110,12 @@ Section [StdRESTful]
         # Set the following to True to have weewx pull the values every one second and hit your API with them
         # Not all hardware can support it. See the User's Guide.
         rapidfire = False
-`
+```
+
 Section [Engine]
-`
+```
 restful_services = weewx.restx.StdStationRegistry, weewx.restx.StdWunderground, weewx.restx.StdPWSweather, weewx.restx.StdCWOP, weewx.restx.StdWOW, weewx.restx.StdAWEKAS, weewx.restx.StdCustomAPI
-`
+```
 
 In the [[CustomAPI]] section in weewx.conf you'll be able to include the address of the api you want to send the info to. As I didn't tinker much with how the platform sends the data, it is currently sending the data through a GET or POST request (I forgot the method) and values as parameters in a querystring (yup, you figured it out)
 
